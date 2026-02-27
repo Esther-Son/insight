@@ -2,8 +2,8 @@ title: "note"
 description: "인사이트"
 author: "Esther-Son"
 github_username: "Esther-Son"
-baseurl: "/note"
-url: "https://esther-son.github.io"
+baseurl: "/insight"
+url: "https://esther-son.github.io/insight"
 
 lang: ko-KR
 
