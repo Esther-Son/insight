@@ -753,19 +753,6 @@ mark {
     display: inline-block;
 }
 
-.welcome-section h1::after {
-    content: 'InSight';
-    position: absolute;
-    left: 0;
-    top: 0;
-    background: linear-gradient(135deg, hsl(var(--color-brand)) 0%, hsl(var(--color-accent)) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: blur(20px);
-    opacity: 0.5;
-    z-index: -1;
-}
 
 .welcome-subtitle {
     font-size: 1.1rem;
