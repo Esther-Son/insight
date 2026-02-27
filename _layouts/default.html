@@ -82,7 +82,7 @@
       localStorage.setItem('theme', n); apply(n);
     };
 
-    /* Pagefind Search - Optimized */
+    /* Pagefind Search */
     var sInput = document.getElementById('pagefind-search');
     var sDrop = document.getElementById('pagefind-dropdown');
     var sWrap = document.getElementById('header-search-wrap');
@@ -90,22 +90,35 @@
     var searchCache = {};
     var pagefindLoading = false;
 
-    // Lazy init: load pagefind only when user focuses search
+    // Load pagefind script
     async function initPagefind() {
       if (pagefind || pagefindLoading) return;
       pagefindLoading = true;
+
+      var pagefindUrl = '{{ "/pagefind/pagefind.js" | relative_url }}';
+      console.log('Loading pagefind from:', pagefindUrl);
+
       try {
-        pagefind = await import('{{ "/pagefind/pagefind.js" | relative_url }}');
+        var module = await import(pagefindUrl);
+        pagefind = module;
+        console.log('Pagefind loaded successfully');
       } catch (e) {
-        console.log('Pagefind not available');
+        console.error('Failed to load pagefind:', e);
+        sDrop.innerHTML = '<div class="pf-empty">Search unavailable</div>';
       }
       pagefindLoading = false;
     }
 
     async function search(query) {
-      if (!pagefind || !query) {
+      if (!query) {
         sDrop.textContent = '';
         return;
+      }
+
+      if (!pagefind) {
+        sDrop.innerHTML = '<div class="pf-empty">Loading search...</div>';
+        await initPagefind();
+        if (!pagefind) return;
       }
 
       // Check cache
@@ -114,36 +127,57 @@
         return;
       }
 
-      var result = await pagefind.search(query);
-      var results = await Promise.all(result.results.slice(0, 5).map(function(r) { return r.data(); }));
+      try {
+        var result = await pagefind.search(query);
+        console.log('Search results for "' + query + '":', result.results.length);
 
-      // Cache results
-      searchCache[query] = results;
-      renderResults(results, query);
+        if (!result.results || result.results.length === 0) {
+          sDrop.innerHTML = '<div class="pf-empty">No results found</div>';
+          return;
+        }
+
+        var results = await Promise.all(result.results.slice(0, 8).map(function(r) { return r.data(); }));
+        searchCache[query] = results;
+        renderResults(results, query);
+      } catch (e) {
+        console.error('Search error:', e);
+        sDrop.innerHTML = '<div class="pf-empty">Search error</div>';
+      }
     }
 
     function renderResults(results, query) {
       if (results.length === 0) {
-        sDrop.innerHTML = '<div class="pf-empty">No results</div>';
+        sDrop.innerHTML = '<div class="pf-empty">No results found</div>';
         return;
       }
 
-      var frag = document.createDocumentFragment();
+      var html = '';
       results.forEach(function(r) {
-        var a = document.createElement('a');
-        a.className = 'pf-result';
-        a.href = r.url;
-        a.textContent = r.meta.title || 'Untitled';
-        frag.appendChild(a);
+        var excerpt = r.excerpt || '';
+        if (excerpt) {
+          excerpt = excerpt.replace(new RegExp(query, 'gi'), function(match) {
+            return '<mark>' + match + '</mark>';
+          });
+          excerpt = excerpt.substring(0, 150) + '...';
+        }
+
+        html += '<a class="pf-result" href="' + r.url + '">';
+        html += '<div class="pf-title">' + (r.meta.title || 'Untitled') + '</div>';
+        if (excerpt) {
+          html += '<div class="pf-excerpt">' + excerpt + '</div>';
+        }
+        html += '</a>';
       });
-      sDrop.textContent = '';
-      sDrop.appendChild(frag);
+
+      sDrop.innerHTML = html;
     }
 
     var debounceTimer;
     sInput.addEventListener('focus', function() {
-      initPagefind(); // Lazy load on focus
-      if (this.value.trim()) sDrop.classList.add('open');
+      initPagefind();
+      if (this.value.trim()) {
+        sDrop.classList.add('open');
+      }
     });
 
     sInput.addEventListener('input', function() {
@@ -157,7 +191,7 @@
           sDrop.classList.remove('open');
           sDrop.textContent = '';
         }
-      }, 200);
+      }, 150);
     });
 
     window.onclick = function(e) {
