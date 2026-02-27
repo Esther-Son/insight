@@ -4,9 +4,12 @@
 
 :root {
     /* === COLOR PALETTE === */
-    --color-brand: 160 84% 39%;
-    --color-brand-light: 160 84% 88%;
-    --color-brand-dark: 160 84% 18%;
+    --color-brand: 252 91% 60%;
+    --color-brand-light: 252 95% 88%;
+    --color-brand-dark: 252 85% 45%;
+
+    --color-accent: 263 70% 50%;
+    --color-accent-light: 263 80% 85%;
 
     --color-surface: 0 0% 100%;
     --color-surface-muted: 240 4.8% 95.9%;
@@ -16,9 +19,9 @@
     --color-focus-ring: 240 5% 64.9%;
 
     /* === SEMANTIC ALIASES === */
-    --bg-base: #f8f5ee;
-    --bg-elevated: #f0ebe3;
-    --bg-header: rgba(240, 235, 227, 0.88);
+    --bg-base: #f8f7fc;
+    --bg-elevated: #f1f0f9;
+    --bg-header: rgba(241, 240, 249, 0.88);
     --bg-glass: rgba(255, 255, 255, 0.7);
     --bg-card: hsl(var(--color-surface));
     --bg-muted: hsl(var(--color-surface-muted));
@@ -26,7 +29,7 @@
     --text-primary: hsl(var(--color-text));
     --text-secondary: hsl(var(--color-text-secondary));
     --text-accent: hsl(var(--color-brand));
-    --text-code: hsl(160 84% 35%);
+    --text-code: hsl(252 91% 50%);
 
     --border-default: hsl(var(--color-border));
     --border-accent: hsl(var(--color-brand) / 0.3);
@@ -43,9 +46,12 @@
 }
 
 [data-theme="dark"] {
-    --color-brand: 158 64% 52%;
-    --color-brand-light: 160 84% 18%;
-    --color-brand-dark: 160 84% 75%;
+    --color-brand: 252 85% 65%;
+    --color-brand-light: 252 80% 25%;
+    --color-brand-dark: 252 90% 80%;
+
+    --color-accent: 263 65% 60%;
+    --color-accent-light: 263 70% 20%;
 
     --color-surface: 240 10% 4.9%;
     --color-surface-muted: 240 3.7% 15.9%;
@@ -54,14 +60,14 @@
     --color-border: 240 3.7% 15.9%;
     --color-focus-ring: 240 4.9% 83.9%;
 
-    --bg-base: #181613;
-    --bg-elevated: #161412;
-    --bg-header: rgba(22, 20, 18, 0.88);
-    --bg-glass: rgba(26, 24, 22, 0.7);
+    --bg-base: #0f0d1a;
+    --bg-elevated: #161326;
+    --bg-header: rgba(22, 19, 38, 0.88);
+    --bg-glass: rgba(26, 24, 45, 0.7);
     --bg-card: hsl(var(--color-surface));
     --bg-muted: hsl(var(--color-surface-muted));
 
-    --text-code: hsl(160 64% 60%);
+    --text-code: hsl(252 85% 70%);
     --highlight-bg: hsl(var(--color-brand-light));
     --highlight-text: hsl(var(--color-brand-dark));
 }
@@ -157,16 +163,39 @@ button {
 }
 
 .site-logo {
-    font-size: 1.4rem;
-    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.6rem;
+    font-weight: 900;
     color: var(--text-primary);
-    letter-spacing: -0.05em;
+    letter-spacing: -0.03em;
+    text-decoration: none;
 }
 
-.site-logo span {
-    color: var(--text-secondary);
-    font-weight: 400;
-    margin-left: 2px;
+.logo-icon {
+    color: hsl(var(--color-brand));
+    filter: drop-shadow(0 0 8px hsl(var(--color-brand) / 0.4));
+}
+
+.logo-text {
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.logo-accent {
+    color: hsl(var(--color-accent));
+    position: relative;
+}
+
+.logo-accent::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, hsl(var(--color-brand)), hsl(var(--color-accent)));
+    border-radius: 2px;
 }
 
 .header-search {
@@ -708,18 +737,34 @@ mark {
    ============================================================ */
 .welcome-section {
     text-align: center;
-    padding: 60px 0 40px;
+    padding: 80px 0 60px;
 }
 
 .welcome-section h1 {
-    font-size: 3rem;
+    font-size: 4rem;
     font-weight: 900;
-    letter-spacing: -0.05em;
-    margin-bottom: 16px;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    letter-spacing: -0.04em;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, hsl(var(--color-brand)) 0%, hsl(var(--color-accent)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    position: relative;
+    display: inline-block;
+}
+
+.welcome-section h1::after {
+    content: 'InSight';
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: linear-gradient(135deg, hsl(var(--color-brand)) 0%, hsl(var(--color-accent)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: blur(20px);
+    opacity: 0.5;
+    z-index: -1;
 }
 
 .welcome-subtitle {
