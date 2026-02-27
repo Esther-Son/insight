@@ -14,7 +14,8 @@
     rel="stylesheet">
 
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
@@ -36,23 +37,25 @@
   <header class="site-header">
     <div class="header-inner">
       <a href="{{ '/' | relative_url }}" class="site-logo">
-        <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
           <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
         </svg>
         <span class="logo-text">In<span class="logo-accent">Sight</span></span>
       </a>
 
-      <div class="header-search" id="header-search-wrap">
+      <div class="header-search" id="search-wrap">
         {% include icons/search.html %}
-        <input type="text" id="pagefind-search" placeholder="Search anything..." autocomplete="off">
-        <div id="pagefind-dropdown"></div>
+        <input type="text" id="search-input" placeholder="Search anything..." autocomplete="off">
+        <div id="search-dropdown"></div>
       </div>
 
       <div class="header-actions">
         <a href="https://github.com/Esther-Son" target="_blank" rel="noopener" title="GitHub">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            <path
+              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
           </svg>
         </a>
         <button id="theme-btn" title="Toggle theme">
@@ -70,135 +73,83 @@
   </main>
 
   <script>
-    /* Theme */
-    var tBtn = document.getElementById('theme-btn'), iS = document.getElementById('i-sun'), iM = document.getElementById('i-moon');
-    function apply(t) {
+    /* ── Theme ── */
+    var tBtn = document.getElementById('theme-btn');
+    var iS = document.getElementById('i-sun');
+    var iM = document.getElementById('i-moon');
+    function applyTheme(t) {
       document.documentElement.setAttribute('data-theme', t);
-      iS.style.display = t === 'dark' ? 'none' : ''; iM.style.display = t === 'dark' ? '' : 'none';
+      iS.style.display = t === 'dark' ? 'none' : '';
+      iM.style.display = t === 'dark' ? '' : 'none';
     }
-    apply(document.documentElement.getAttribute('data-theme') || 'light');
+    applyTheme(document.documentElement.getAttribute('data-theme') || 'light');
     tBtn.onclick = function () {
       var n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('theme', n); apply(n);
+      localStorage.setItem('theme', n);
+      applyTheme(n);
     };
 
-    /* Pagefind Search */
-    var sInput = document.getElementById('pagefind-search');
-    var sDrop = document.getElementById('pagefind-dropdown');
-    var sWrap = document.getElementById('header-search-wrap');
-    var pagefind = null;
-    var searchCache = {};
-    var pagefindLoading = false;
+    /* ── Search ── */
+    var sInput = document.getElementById('search-input');
+    var sDrop = document.getElementById('search-dropdown');
+    var sWrap = document.getElementById('search-wrap');
+    var POSTS = null;
 
-    // Load pagefind script
-    async function initPagefind() {
-      if (pagefind || pagefindLoading) return;
-      pagefindLoading = true;
+    fetch('{{ "/assets/search.json" | relative_url }}')
+      .then(function (r) { return r.json(); })
+      .then(function (data) { POSTS = data; });
 
-      var pagefindUrl = '{{ "/pagefind/pagefind.js" | relative_url }}';
-      console.log('Loading pagefind from:', pagefindUrl);
-
-      try {
-        var module = await import(pagefindUrl);
-        pagefind = module;
-        console.log('Pagefind loaded successfully');
-      } catch (e) {
-        console.error('Failed to load pagefind:', e);
-        sDrop.innerHTML = '<div class="pf-empty">Search unavailable</div>';
-      }
-      pagefindLoading = false;
+    function hl(str, q) {
+      if (!str || !q) return str || '';
+      var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+      return str.replace(re, '<mark>$1</mark>');
     }
 
-    async function search(query) {
-      if (!query) {
-        sDrop.textContent = '';
-        return;
-      }
+    function search(query) {
+      if (!POSTS) return;
+      if (!query) { sDrop.textContent = ''; return; }
+      var q = query.toLowerCase();
+      var results = POSTS.filter(function (p) {
+        return p.title.toLowerCase().includes(q) ||
+          (p.excerpt && p.excerpt.toLowerCase().includes(q)) ||
+          (p.categories && p.categories.join(' ').toLowerCase().includes(q));
+      }).slice(0, 8);
 
-      if (!pagefind) {
-        sDrop.innerHTML = '<div class="pf-empty">Loading search...</div>';
-        await initPagefind();
-        if (!pagefind) return;
-      }
-
-      // Check cache
-      if (searchCache[query]) {
-        renderResults(searchCache[query], query);
-        return;
-      }
-
-      try {
-        var result = await pagefind.search(query);
-        console.log('Search results for "' + query + '":', result.results.length);
-
-        if (!result.results || result.results.length === 0) {
-          sDrop.innerHTML = '<div class="pf-empty">No results found</div>';
-          return;
-        }
-
-        var results = await Promise.all(result.results.slice(0, 8).map(function(r) { return r.data(); }));
-        searchCache[query] = results;
-        renderResults(results, query);
-      } catch (e) {
-        console.error('Search error:', e);
-        sDrop.innerHTML = '<div class="pf-empty">Search error</div>';
-      }
-    }
-
-    function renderResults(results, query) {
       if (results.length === 0) {
-        sDrop.innerHTML = '<div class="pf-empty">No results found</div>';
+        sDrop.innerHTML = '<div class="sr-empty">검색 결과가 없습니다</div>';
         return;
       }
 
       var html = '';
-      results.forEach(function(r) {
-        var excerpt = r.excerpt || '';
-        if (excerpt) {
-          excerpt = excerpt.replace(new RegExp(query, 'gi'), function(match) {
-            return '<mark>' + match + '</mark>';
-          });
-          excerpt = excerpt.substring(0, 150) + '...';
-        }
-
-        html += '<a class="pf-result" href="' + r.url + '">';
-        html += '<div class="pf-title">' + (r.meta.title || 'Untitled') + '</div>';
-        if (excerpt) {
-          html += '<div class="pf-excerpt">' + excerpt + '</div>';
-        }
+      results.forEach(function (r) {
+        var excerpt = r.excerpt ? hl(r.excerpt.substring(0, 120) + '...', query) : '';
+        html += '<a class="sr-item" href="' + r.url + '">';
+        html += '<div class="sr-title">' + hl(r.title, query) + '</div>';
+        html += '<div class="sr-meta"><span class="sr-date">' + r.date + '</span>';
+        if (r.categories && r.categories.length) html += '<span class="sr-cat">' + r.categories.join(', ') + '</span>';
+        html += '</div>';
+        if (excerpt) html += '<div class="sr-excerpt">' + excerpt + '</div>';
         html += '</a>';
       });
-
       sDrop.innerHTML = html;
     }
 
     var debounceTimer;
-    sInput.addEventListener('focus', function() {
-      initPagefind();
-      if (this.value.trim()) {
-        sDrop.classList.add('open');
-      }
+    sInput.addEventListener('focus', function () {
+      if (this.value.trim()) sDrop.classList.add('open');
     });
-
-    sInput.addEventListener('input', function() {
+    sInput.addEventListener('input', function () {
       var q = this.value.trim();
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(function() {
-        if (q) {
-          sDrop.classList.add('open');
-          search(q);
-        } else {
-          sDrop.classList.remove('open');
-          sDrop.textContent = '';
-        }
-      }, 150);
+      debounceTimer = setTimeout(function () {
+        if (q) { sDrop.classList.add('open'); search(q); }
+        else { sDrop.classList.remove('open'); sDrop.textContent = ''; }
+      }, 120);
     });
-
-    window.onclick = function(e) {
+    window.addEventListener('click', function (e) {
       if (!sWrap.contains(e.target)) sDrop.classList.remove('open');
-    };
-
-    window.onkeydown = function(e) {
+    });
+    window.addEventListener('keydown', function (e) {
       if (e.key === '/' && document.activeElement !== sInput) {
         e.preventDefault();
         sInput.focus();
@@ -207,7 +158,7 @@
         sDrop.classList.remove('open');
         sInput.blur();
       }
-    };
+    });
   </script>
 
   <script>document.addEventListener('DOMContentLoaded', function () { hljs.highlightAll(); });</script>
