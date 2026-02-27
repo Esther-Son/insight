@@ -10,12 +10,12 @@
     {%- set posts_section = get_section(path="posts/_index.md") -%}
     {%- set all_posts = posts_section.pages -%}
 
-    {# Render first 10 posts server-side; rest loaded via infinite scroll #}
+    {# 첫 10개: Zola 서버사이드 렌더 (copy 버튼 포함) #}
     {% for page in all_posts | slice(end=10) %}
     <div class="post-card-wrapper">
         <a class="post-card" href="{{ page.permalink }}">
             <div class="pc-meta">
-                <span class="pc-avatar">{{ config.extra.author | truncate(length=1, end="") | upper }}</span>
+                <span class="pc-avatar">I</span>
                 <span>{{ page.date | date(format="%Y. %m. %d") }}</span>
                 {% if page.extra.categories and page.extra.categories | length > 0 %}
                 <span style="opacity:0.4">·</span>
@@ -35,22 +35,21 @@
     {% endfor %}
 </div>
 
-{# Embed ALL post data as JSON for infinite scroll #}
+{# 모든 포스트 데이터를 JSON으로 임베드 (무한스크롤용) #}
 <script id="all-posts-data" type="application/json">
 [
-  {%- for page in all_posts %}
-  {
-    "title": {{ page.title | json_encode() }},
-    "url": {{ page.permalink | json_encode() }},
-    "date": {{ page.date | date(format="%Y. %m. %d") | json_encode() }},
-    "categories": {{ page.extra.categories | default(value=[]) | json_encode() }},
-    "excerpt": {{ page.summary | default(value="") | safe | striptags | truncate(length=120) | json_encode() }}
-  }{% if not loop.last %},{% endif %}
-  {%- endfor %}
+    {%- for page in all_posts %}
+    {
+        "title": {{ page.title | json_encode() }},
+        "url": {{ page.permalink | json_encode() }},
+        "date": {{ page.date | date(format="%Y. %m. %d") | json_encode() }},
+        "categories": {{ page.extra.categories | default(value=[]) | json_encode() }},
+        "excerpt": {{ page.summary | default(value="") | safe | striptags | truncate(length=120) | json_encode() }}
+    }{% if not loop.last %},{% endif %}
+    {%- endfor %}
 ]
 </script>
 
-{# Infinite scroll sentinel & loader #}
 <div id="infinite-sentinel"></div>
 <div id="load-more-spinner">
     <div class="spinner-dots"><span></span><span></span><span></span></div>
@@ -65,23 +64,54 @@
         var endMsg = document.getElementById('load-end-msg');
         var sentinel = document.getElementById('infinite-sentinel');
 
-        var raw = document.getElementById('all-posts-data');
-        var allPosts = JSON.parse(raw.textContent || '[]');
+        var allPosts = JSON.parse(document.getElementById('all-posts-data').textContent || '[]');
         var loaded = Math.min(10, allPosts.length);
         var loading = false;
 
-        function avatarLetter(cats) {
-            if (cats && cats.length > 0) return cats[0].charAt(0).toUpperCase();
-            return 'I';
+        /* ── Copy 버튼 바인딩 ── */
+        function bindCopyButtons(scope) {
+            scope.querySelectorAll('.card-copy-btn').forEach(function (btn) {
+                if (btn.dataset.bound) return;
+                btn.dataset.bound = '1';
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var url = btn.dataset.url;
+                    fetch(url)
+                        .then(function (r) { return r.text(); })
+                        .then(function (html) {
+                            var doc = new DOMParser().parseFromString(html, 'text/html');
+                            var content = doc.querySelector('.post-content');
+                            if (content) {
+                                navigator.clipboard.writeText(content.innerText || content.textContent).then(function () {
+                                    btn.classList.add('copied');
+                                    setTimeout(function () { btn.classList.remove('copied'); }, 2000);
+                                });
+                            }
+                        });
+                });
+            });
         }
 
-        function renderCard(p, delay) {
+        /* ── 카드 렌더 (무한스크롤용) ── */
+        function esc(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        var COPY_SVG = '<svg class="icon-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        var CHECK_SVG = '<svg class="icon-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+
+        function renderCard(p, delayMs) {
             var wrapper = document.createElement('div');
-            wrapper.className = 'post-card-wrapper';
-            wrapper.style.animationDelay = delay + 'ms';
+            wrapper.className = 'post-card-wrapper reveal';
+            wrapper.style.animationDelay = delayMs + 'ms';
 
             var cats = p.categories || [];
-            var catsHtml = cats.length > 0
+            var catHtml = cats.length
                 ? '<span style="opacity:0.4">·</span><span>' + esc(cats.join(', ')) + '</span>'
                 : '';
             var excerptHtml = p.excerpt
@@ -93,34 +123,19 @@
                 '<div class="pc-meta">' +
                 '<span class="pc-avatar">I</span>' +
                 '<span>' + esc(p.date) + '</span>' +
-                catsHtml +
+                catHtml +
                 '</div>' +
                 '<div class="pc-title">' + esc(p.title) + '</div>' +
                 excerptHtml +
                 '</a>' +
                 '<button class="card-copy-btn" data-url="' + esc(p.url) + '" title="Copy content">' +
-                '<svg class="icon-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>' +
-                '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
-                '</svg>' +
-                '<svg class="icon-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                '<polyline points="20 6 9 17 4 12"/>' +
-                '</svg>' +
+                COPY_SVG + CHECK_SVG +
                 '</button>';
 
-            // animate in
-            wrapper.classList.add('reveal');
             return wrapper;
         }
 
-        function esc(s) {
-            return String(s)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
-        }
-
+        /* ── 무한스크롤 로드 ── */
         function loadMore() {
             if (loading || loaded >= allPosts.length) return;
             loading = true;
@@ -134,9 +149,7 @@
                 }
                 feed.appendChild(frag);
                 loaded = end;
-
-                // bind copy buttons for new cards
-                bindCopyButtons(feed.querySelectorAll('.card-copy-btn'));
+                bindCopyButtons(feed);
 
                 spinner.classList.remove('visible');
                 loading = false;
@@ -145,39 +158,12 @@
                     endMsg.classList.add('visible');
                     observer.disconnect();
                 }
-            }, 400);
+            }, 350);
         }
 
-        function bindCopyButtons(btns) {
-            btns.forEach(function (btn) {
-                if (btn.dataset.bound) return;
-                btn.dataset.bound = '1';
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var url = this.dataset.url;
-                    var btnEl = this;
-                    fetch(url)
-                        .then(function (res) { return res.text(); })
-                        .then(function (html) {
-                            var parser = new DOMParser();
-                            var doc = parser.parseFromString(html, 'text/html');
-                            var content = doc.querySelector('.post-content');
-                            if (content) {
-                                navigator.clipboard.writeText(content.innerText || content.textContent).then(function () {
-                                    btnEl.classList.add('copied');
-                                    setTimeout(function () { btnEl.classList.remove('copied'); }, 2000);
-                                });
-                            }
-                        });
-                });
-            });
-        }
+        /* ── 초기 copy 버튼 바인딩 + IntersectionObserver ── */
+        bindCopyButtons(feed);
 
-        // Bind initial copy buttons
-        bindCopyButtons(document.querySelectorAll('.card-copy-btn'));
-
-        // IntersectionObserver for infinite scroll
         var observer = new IntersectionObserver(function (entries) {
             if (entries[0].isIntersecting) loadMore();
         }, { rootMargin: '200px' });
