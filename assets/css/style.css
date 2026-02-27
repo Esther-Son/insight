@@ -9,7 +9,6 @@
     --color-brand-dark: 252 85% 45%;
 
     --color-accent: 263 70% 50%;
-    --color-accent-light: 263 80% 85%;
 
     --color-surface: 0 0% 100%;
     --color-surface-muted: 240 4.8% 95.9%;
@@ -20,9 +19,6 @@
 
     /* === SEMANTIC ALIASES === */
     --bg-base: #f8f7fc;
-    --bg-elevated: #f1f0f9;
-    --bg-header: rgba(241, 240, 249, 0.88);
-    --bg-glass: rgba(255, 255, 255, 0.7);
     --bg-card: hsl(var(--color-surface));
     --bg-muted: hsl(var(--color-surface-muted));
 
@@ -51,7 +47,6 @@
     --color-brand-dark: 252 90% 80%;
 
     --color-accent: 263 65% 60%;
-    --color-accent-light: 263 70% 20%;
 
     --color-surface: 240 10% 4.9%;
     --color-surface-muted: 240 3.7% 15.9%;
@@ -61,9 +56,6 @@
     --color-focus-ring: 240 4.9% 83.9%;
 
     --bg-base: #0f0d1a;
-    --bg-elevated: #161326;
-    --bg-header: rgba(22, 19, 38, 0.88);
-    --bg-glass: rgba(26, 24, 45, 0.7);
     --bg-card: hsl(var(--color-surface));
     --bg-muted: hsl(var(--color-surface-muted));
 
@@ -141,25 +133,6 @@ button {
     max-width: 600px;
     margin: 0 auto;
     padding: 0 24px;
-}
-
-.home-search-area {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.home-hint {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-}
-
-.home-hint kbd {
-    background: var(--bg-muted);
-    border: 1px solid var(--border-default);
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-family: inherit;
-    font-size: 0.8rem;
 }
 
 .site-logo {
@@ -268,7 +241,7 @@ button {
 }
 
 /* ============================================================
-   PAGEFIND SEARCH DROPDOWN
+   SEARCH DROPDOWN
    ============================================================ */
 #search-dropdown {
     display: none;
@@ -487,14 +460,6 @@ mark {
 
 .post-back:hover {
     color: var(--text-primary);
-}
-
-.post-title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 1.1;
-    margin-bottom: 20px;
 }
 
 .post-content {
