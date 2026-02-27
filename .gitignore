@@ -1,13 +1,5 @@
-# Jekyll
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-
-# Bundler
-vendor/
-.bundle/
-Gemfile.lock
+# Zola
+public/
 
 # Node
 node_modules/

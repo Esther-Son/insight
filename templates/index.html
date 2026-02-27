@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="welcome-section">
+    <h1>InSight</h1>
+    <p class="welcome-subtitle">Stock &amp; News Analysis</p>
+</div>
+
+<div class="post-feed" id="post-feed">
+    {%- set posts_section = get_section(path="posts/_index.md") -%}
+    {%- set all_posts = posts_section.pages -%}
+
+    {# Render first 10 posts server-side; rest loaded via infinite scroll #}
+    {% for page in all_posts | slice(end=10) %}
+    <div class="post-card-wrapper">
+        <a class="post-card" href="{{ page.permalink }}">
+            <div class="pc-meta">
+                <span class="pc-avatar">{{ config.extra.author | truncate(length=1, end="") | upper }}</span>
+                <span>{{ page.date | date(format="%Y. %m. %d") }}</span>
+                {% if page.extra.categories and page.extra.categories | length > 0 %}
+                <span style="opacity:0.4">·</span>
+                <span>{{ page.extra.categories | join(sep=", ") }}</span>
+                {% endif %}
+            </div>
+            <div class="pc-title">{{ page.title }}</div>
+            {% if page.summary %}
+            <div class="pc-excerpt">{{ page.summary | safe | striptags | truncate(length=120) }}</div>
+            {% endif %}
+        </a>
+        <button class="card-copy-btn" data-url="{{ page.permalink }}" title="Copy content">
+            {% include "icons/copy.html" %}
+            {% include "icons/check.html" %}
+        </button>
+    </div>
+    {% endfor %}
+</div>
+
+{# Embed ALL post data as JSON for infinite scroll #}
+<script id="all-posts-data" type="application/json">
+[
+  {%- for page in all_posts %}
+  {
+    "title": {{ page.title | json_encode() }},
+    "url": {{ page.permalink | json_encode() }},
+    "date": {{ page.date | date(format="%Y. %m. %d") | json_encode() }},
+    "categories": {{ page.extra.categories | default(value=[]) | json_encode() }},
+    "excerpt": {{ page.summary | default(value="") | safe | striptags | truncate(length=120) | json_encode() }}
+  }{% if not loop.last %},{% endif %}
+  {%- endfor %}
+]
+</script>
+
+{# Infinite scroll sentinel & loader #}
+<div id="infinite-sentinel"></div>
+<div id="load-more-spinner">
+    <div class="spinner-dots"><span></span><span></span><span></span></div>
+</div>
+<div id="load-end-msg">— 모두 불러왔습니다 —</div>
+
+<script>
+    (function () {
+        var BATCH = 10;
+        var feed = document.getElementById('post-feed');
+        var spinner = document.getElementById('load-more-spinner');
+        var endMsg = document.getElementById('load-end-msg');
+        var sentinel = document.getElementById('infinite-sentinel');
+
+        var raw = document.getElementById('all-posts-data');
+        var allPosts = JSON.parse(raw.textContent || '[]');
+        var loaded = Math.min(10, allPosts.length);
+        var loading = false;
+
+        function avatarLetter(cats) {
+            if (cats && cats.length > 0) return cats[0].charAt(0).toUpperCase();
+            return 'I';
+        }
+
+        function renderCard(p, delay) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'post-card-wrapper';
+            wrapper.style.animationDelay = delay + 'ms';
+
+            var cats = p.categories || [];
+            var catsHtml = cats.length > 0
+                ? '<span style="opacity:0.4">·</span><span>' + esc(cats.join(', ')) + '</span>'
+                : '';
+            var excerptHtml = p.excerpt
+                ? '<div class="pc-excerpt">' + esc(p.excerpt) + '</div>'
+                : '';
+
+            wrapper.innerHTML =
+                '<a class="post-card" href="' + esc(p.url) + '">' +
+                '<div class="pc-meta">' +
+                '<span class="pc-avatar">I</span>' +
+                '<span>' + esc(p.date) + '</span>' +
+                catsHtml +
+                '</div>' +
+                '<div class="pc-title">' + esc(p.title) + '</div>' +
+                excerptHtml +
+                '</a>' +
+                '<button class="card-copy-btn" data-url="' + esc(p.url) + '" title="Copy content">' +
+                '<svg class="icon-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>' +
+                '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
+                '</svg>' +
+                '<svg class="icon-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                '<polyline points="20 6 9 17 4 12"/>' +
+                '</svg>' +
+                '</button>';
+
+            // animate in
+            wrapper.classList.add('reveal');
+            return wrapper;
+        }
+
+        function esc(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function loadMore() {
+            if (loading || loaded >= allPosts.length) return;
+            loading = true;
+            spinner.classList.add('visible');
+
+            setTimeout(function () {
+                var end = Math.min(loaded + BATCH, allPosts.length);
+                var frag = document.createDocumentFragment();
+                for (var i = loaded; i < end; i++) {
+                    frag.appendChild(renderCard(allPosts[i], (i - loaded) * 40));
+                }
+                feed.appendChild(frag);
+                loaded = end;
+
+                // bind copy buttons for new cards
+                bindCopyButtons(feed.querySelectorAll('.card-copy-btn'));
+
+                spinner.classList.remove('visible');
+                loading = false;
+
+                if (loaded >= allPosts.length) {
+                    endMsg.classList.add('visible');
+                    observer.disconnect();
+                }
+            }, 400);
+        }
+
+        function bindCopyButtons(btns) {
+            btns.forEach(function (btn) {
+                if (btn.dataset.bound) return;
+                btn.dataset.bound = '1';
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var url = this.dataset.url;
+                    var btnEl = this;
+                    fetch(url)
+                        .then(function (res) { return res.text(); })
+                        .then(function (html) {
+                            var parser = new DOMParser();
+                            var doc = parser.parseFromString(html, 'text/html');
+                            var content = doc.querySelector('.post-content');
+                            if (content) {
+                                navigator.clipboard.writeText(content.innerText || content.textContent).then(function () {
+                                    btnEl.classList.add('copied');
+                                    setTimeout(function () { btnEl.classList.remove('copied'); }, 2000);
+                                });
+                            }
+                        });
+                });
+            });
+        }
+
+        // Bind initial copy buttons
+        bindCopyButtons(document.querySelectorAll('.card-copy-btn'));
+
+        // IntersectionObserver for infinite scroll
+        var observer = new IntersectionObserver(function (entries) {
+            if (entries[0].isIntersecting) loadMore();
+        }, { rootMargin: '200px' });
+
+        if (loaded < allPosts.length) {
+            observer.observe(sentinel);
+        } else {
+            endMsg.classList.add('visible');
+        }
+    }());
+</script>
+{% endblock content %}

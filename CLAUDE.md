@@ -64,22 +64,52 @@
 - 포스트 작성 완료 후 **반드시 git push** 한다. 로컬에만 남기지 않는다.
 - 커밋 메시지는 간결하게: `글 작성: [주제]` 또는 `수정: [내용]`
 
+## 프로젝트 구조 (Zola 기반)
+
+```
+insight/
+├── config.toml              # Zola 설정
+├── content/
+│   └── posts/               # 포스트 (Zola markdown)
+│       ├── _index.md        # section 설정
+│       └── YYYY-MM-DD-*.md  # 개별 포스트
+├── templates/
+│   ├── base.html            # 공통 레이아웃 (Pagefind 검색 포함)
+│   ├── index.html           # 홈 (무한스크롤)
+│   ├── page.html            # 포스트 상세
+│   └── icons/               # SVG 아이콘
+├── static/
+│   └── assets/css/style.css # 디자인 시스템
+├── package.json             # pagefind 빌드
+└── .github/workflows/pages.yml  # CI/CD
+```
+
 ## 포스트 작성 규칙
 
-### 파일명
-- 형식: `YYYY-MM-DD-주제-영문-요약.md`
-- 소문자, 하이픈(`-`) 구분
-- 예: `2026-02-27-fed-rate-policy-impact.md`
+### 파일 위치
+- `content/posts/YYYY-MM-DD-주제-영문-요약.md`
 
-### Front Matter
+### Front Matter (Zola TOML 형식)
 
-```yaml
----
-layout: note
-title: "제목"
-date: YYYY-MM-DD HH:MM:SS +0900
-categories: [category1, category2]
----
+```toml
++++
+title = "제목"
+date = YYYY-MM-DD
+
+[extra]
+categories = ["category1", "category2"]
++++
+```
+
+### 로컬 개발
+
+```bash
+# 로컬 미리보기 (zola serve는 별도 설치 필요)
+zola serve
+
+# 빌드 테스트
+zola build --output-dir /tmp/insight_public
+npx pagefind --site /tmp/insight_public --force-language ko
 ```
 
 ### 작성 언어

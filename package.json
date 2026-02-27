@@ -1,7 +1,10 @@
 {
-  "name": "studynote",
+  "name": "insight",
   "scripts": {
-    "build": "bundle exec jekyll build",
-    "serve": "bundle exec jekyll serve"
+    "build": "zola build && npx pagefind --site public --glob \"**/*.html\" --force-language ko",
+    "serve": "zola serve"
+  },
+  "devDependencies": {
+    "pagefind": "^1.4.0"
   }
 }
