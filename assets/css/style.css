@@ -702,3 +702,28 @@ mark {
 .card-copy-btn.copied .icon-check {
     display: block;
 }
+
+/* ============================================================
+   WELCOME SECTION
+   ============================================================ */
+.welcome-section {
+    text-align: center;
+    padding: 60px 0 40px;
+}
+
+.welcome-section h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcome-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}

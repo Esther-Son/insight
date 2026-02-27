@@ -3,6 +3,7 @@ layout: default
 title: Home
 ---
 
-<div class="home-search-area">
-  <p class="home-hint">Press <kbd>/</kbd> to search</p>
+<div class="welcome-section">
+  <h1>인사이트</h1>
+  <p class="welcome-subtitle">주식 & 뉴스 분석</p>
 </div>

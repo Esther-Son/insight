@@ -35,6 +35,13 @@
    - 예: `per_ratio.md`, `market_trend.md`
 3. 주제에 맞는 폴더가 없다면 새로 생성하세요.
 
+## 뉴스 소스
+
+주로 참고하는 뉴스 사이트:
+- **Techmeme** (https://techmeme.com) - 테크 뉴스 애그리게이터
+- **GeekNews** (https://news.hada.io) - 한국 테크 뉴스 커뮤니티
+- **Hacker News** (https://news.ycombinator.com) - 해커 뉴스 커뮤니티
+
 ## 폴더 구조
 
 ```
