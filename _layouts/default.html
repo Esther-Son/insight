@@ -43,6 +43,12 @@
         <span class="logo-text">In<span class="logo-accent">Sight</span></span>
       </a>
 
+      <div class="header-search" id="header-search-wrap">
+        {% include icons/search.html %}
+        <input type="text" id="pagefind-search" placeholder="Search anything..." autocomplete="off">
+        <div id="pagefind-dropdown"></div>
+      </div>
+
       <div class="header-actions">
         <a href="https://github.com/Esther-Son" target="_blank" rel="noopener" title="GitHub">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -74,6 +80,99 @@
     tBtn.onclick = function () {
       var n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       localStorage.setItem('theme', n); apply(n);
+    };
+
+    /* Pagefind Search - Optimized */
+    var sInput = document.getElementById('pagefind-search');
+    var sDrop = document.getElementById('pagefind-dropdown');
+    var sWrap = document.getElementById('header-search-wrap');
+    var pagefind = null;
+    var searchCache = {};
+    var pagefindLoading = false;
+
+    // Lazy init: load pagefind only when user focuses search
+    async function initPagefind() {
+      if (pagefind || pagefindLoading) return;
+      pagefindLoading = true;
+      try {
+        pagefind = await import('{{ "/pagefind/pagefind.js" | relative_url }}');
+      } catch (e) {
+        console.log('Pagefind not available');
+      }
+      pagefindLoading = false;
+    }
+
+    async function search(query) {
+      if (!pagefind || !query) {
+        sDrop.textContent = '';
+        return;
+      }
+
+      // Check cache
+      if (searchCache[query]) {
+        renderResults(searchCache[query], query);
+        return;
+      }
+
+      var result = await pagefind.search(query);
+      var results = await Promise.all(result.results.slice(0, 5).map(function(r) { return r.data(); }));
+
+      // Cache results
+      searchCache[query] = results;
+      renderResults(results, query);
+    }
+
+    function renderResults(results, query) {
+      if (results.length === 0) {
+        sDrop.innerHTML = '<div class="pf-empty">No results</div>';
+        return;
+      }
+
+      var frag = document.createDocumentFragment();
+      results.forEach(function(r) {
+        var a = document.createElement('a');
+        a.className = 'pf-result';
+        a.href = r.url;
+        a.textContent = r.meta.title || 'Untitled';
+        frag.appendChild(a);
+      });
+      sDrop.textContent = '';
+      sDrop.appendChild(frag);
+    }
+
+    var debounceTimer;
+    sInput.addEventListener('focus', function() {
+      initPagefind(); // Lazy load on focus
+      if (this.value.trim()) sDrop.classList.add('open');
+    });
+
+    sInput.addEventListener('input', function() {
+      var q = this.value.trim();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function() {
+        if (q) {
+          sDrop.classList.add('open');
+          search(q);
+        } else {
+          sDrop.classList.remove('open');
+          sDrop.textContent = '';
+        }
+      }, 200);
+    });
+
+    window.onclick = function(e) {
+      if (!sWrap.contains(e.target)) sDrop.classList.remove('open');
+    };
+
+    window.onkeydown = function(e) {
+      if (e.key === '/' && document.activeElement !== sInput) {
+        e.preventDefault();
+        sInput.focus();
+      }
+      if (e.key === 'Escape') {
+        sDrop.classList.remove('open');
+        sInput.blur();
+      }
     };
   </script>
 
