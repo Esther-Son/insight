@@ -36,7 +36,7 @@
 
   <header class="site-header">
     <div class="header-inner">
-      <a href="/" class="site-logo">
+      <a href="{{ config.base_url }}/" class="site-logo">
         <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -74,15 +74,22 @@
 
   <script>
     /* Theme */
-    var tBtn = document.getElementById('theme-btn'), iS = document.getElementById('i-sun'), iM = document.getElementById('i-moon');
-    function apply(t) {
+    var tBtn = document.getElementById('theme-btn');
+    var iS = document.getElementById('i-sun');
+    var iM = document.getElementById('i-moon');
+
+    function applyTheme(t) {
       document.documentElement.setAttribute('data-theme', t);
-      iS.style.display = t === 'dark' ? 'none' : ''; iM.style.display = t === 'dark' ? '' : 'none';
+      iS.style.display = t === 'dark' ? 'none' : '';
+      iM.style.display = t === 'dark' ? '' : 'none';
     }
-    apply(document.documentElement.getAttribute('data-theme') || 'light');
+
+    applyTheme(document.documentElement.getAttribute('data-theme') || 'light');
+
     tBtn.onclick = function () {
       var n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('theme', n); apply(n);
+      localStorage.setItem('theme', n);
+      applyTheme(n);
     };
 
     /* Pagefind Search */
@@ -90,50 +97,36 @@
     var sDrop = document.getElementById('pagefind-dropdown');
     var sWrap = document.getElementById('header-search-wrap');
     var pagefind = null;
-    var searchCache = {};
-    var pagefindLoading = false;
+    var pagefindReady = false;
+    var pendingQuery = null;
     var activeIdx = -1;
+    var debounceTimer;
 
-    async function initPagefind() {
-      if (pagefind || pagefindLoading) return;
-      pagefindLoading = true;
-      try {
-        pagefind = await import('{{ config.base_url }}/pagefind/pagefind.js');
-      } catch (e) {
-        console.log('Pagefind not available');
-      }
-      pagefindLoading = false;
+    function loadPagefind() {
+      if (pagefindReady) return Promise.resolve();
+      pagefindReady = true;
+      return import('{{ config.base_url }}/pagefind/pagefind.js')
+        .then(function (pf) { pagefind = pf; })
+        .catch(function (e) { console.warn('Pagefind load failed:', e); pagefindReady = false; });
     }
 
     async function search(query) {
       if (!query) {
         sDrop.classList.remove('open');
         sDrop.textContent = '';
+        pendingQuery = null;
         return;
       }
-      if (pagefindLoading) {
-        sDrop.innerHTML = '<div class="pf-empty">Searching...</div>';
-        sDrop.classList.add('open');
-        return;
-      }
-      if (!pagefind) {
-        sDrop.innerHTML = '<div class="pf-empty">No results</div>';
-        sDrop.classList.add('open');
-        return;
-      }
-      if (searchCache[query]) {
-        renderResults(searchCache[query], query);
-        return;
-      }
+      pendingQuery = query;
+      if (!pagefind) return;
       var result = await pagefind.search(query);
       var results = await Promise.all(result.results.slice(0, 5).map(function (r) { return r.data(); }));
-      searchCache[query] = results;
       renderResults(results, query);
     }
 
     function renderResults(results, query) {
       if (results.length === 0) {
-        sDrop.innerHTML = '<div class="pf-empty">No results</div>';
+        sDrop.innerHTML = '<div class="pf-empty">검색 결과 없음</div>';
       } else {
         var frag = document.createDocumentFragment();
         results.forEach(function (r) {
@@ -159,9 +152,7 @@
       return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function getItems() {
-      return Array.from(sDrop.querySelectorAll('.pf-result'));
-    }
+    function getItems() { return Array.from(sDrop.querySelectorAll('.pf-result')); }
 
     function setActive(idx) {
       var items = getItems();
@@ -173,15 +164,17 @@
       activeIdx = idx;
     }
 
-    var debounceTimer;
     sInput.addEventListener('focus', function () {
-      initPagefind();
+      loadPagefind().then(function () {
+        if (pendingQuery) search(pendingQuery);
+      });
       if (this.value.trim()) sDrop.classList.add('open');
     });
 
     sInput.addEventListener('input', function () {
       activeIdx = -1;
       var q = this.value.trim();
+      pendingQuery = q;
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(function () { search(q); }, 200);
     });
@@ -195,11 +188,9 @@
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setActive(Math.max(activeIdx - 1, 0));
-      } else if (e.key === 'Enter') {
-        if (activeIdx >= 0 && items[activeIdx]) {
-          e.preventDefault();
-          window.location.href = items[activeIdx].href;
-        }
+      } else if (e.key === 'Enter' && activeIdx >= 0 && items[activeIdx]) {
+        e.preventDefault();
+        window.location.href = items[activeIdx].href;
       }
     });
 
