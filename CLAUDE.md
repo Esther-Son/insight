@@ -61,8 +61,12 @@
 
 ## 작업 워크플로우
 
-- 포스트 작성 완료 후 **반드시 git push** 한다. 로컬에만 남기지 않는다.
-- 커밋 메시지는 간결하게: `글 작성: [주제]` 또는 `수정: [내용]`
+### 뉴스 포스트 작성 순서 (반드시 이 순서를 지킬 것)
+
+1. **지정 소스를 직접 읽는다** — Techmeme, GeekNews, Hacker News를 실제로 fetch해서 오늘의 헤드라인을 확인한다. 웹 검색(search_web)으로 대체하는 것은 **절대 금지**.
+2. **소스에서 읽은 내용만 쓴다** — 각 항목에 출처 링크를 명시한다.
+3. 포스트 작성 완료 후 **반드시 git push** 한다. 로컬에만 남기지 않는다.
+4. 커밋 메시지는 간결하게: `글 작성: [주제]` 또는 `수정: [내용]`
 
 ## 프로젝트 구조 (Zola 기반)
 
@@ -115,8 +119,20 @@ npx pagefind --site /tmp/insight_public --force-language ko
 ### 작성 언어
 - 본문은 한글. 고유명사·기술 용어는 원어 병기.
 
-## 뉴스 소스
+## 뉴스 소스 (필수 — 반드시 직접 읽을 것)
 
-- [Techmeme](https://techmeme.com) — 테크 뉴스 애그리게이터
-- [GeekNews](https://news.hada.io) — 한국 테크 뉴스
-- [Hacker News](https://news.ycombinator.com) — 글로벌 테크 커뮤니티
+> **⚠️ 경고:** 뉴스 포스트를 작성할 때 아래 소스를 직접 fetch하지 않으면 작업이 잘못된 것이다.
+> `search_web`이나 LLM 학습 지식으로 뉴스를 작성하는 것은 허용되지 않는다.
+> 소스를 읽고, 오늘 날짜 헤드라인을 확인하고, 그 내용을 바탕으로 써야 한다.
+
+| 소스 | URL | 용도 |
+|------|-----|------|
+| Techmeme | https://techmeme.com | 테크 뉴스 애그리게이터 — 최상단부터 읽기 |
+| GeekNews | https://news.hada.io | 한국 테크 커뮤니티 — 국내 시각 반영 |
+| Hacker News | https://news.ycombinator.com | 글로벌 개발자 커뮤니티 — 기술 심층 |
+
+**읽는 방법:**
+1. `read_url_content` 툴로 각 소스 URL을 fetch한다.
+2. `view_content_chunk`로 Top News 청크를 순서대로 읽는다.
+3. 오늘 날짜 기준 중요 헤드라인 3~6개를 선별해서 포스트에 담는다.
+4. 각 항목 끝에 원본 소스 링크를 반드시 표기한다.

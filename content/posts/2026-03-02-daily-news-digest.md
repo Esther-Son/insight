@@ -1,71 +1,79 @@
 +++
-title = "오늘의 뉴스 브리핑 (2026-03-02): 중동 전선 확전, 코스피 6000대 유지, MWC AI 물결"
+title = "오늘의 뉴스 브리핑 (2026-03-02): AWS 데이터센터 피격, Anthropic vs 펜타곤, Qwen3.5 공개"
 date = 2026-03-02
 
 [extra]
-categories = ["news", "market", "geopolitics"]
+categories = ["news", "AI", "geopolitics"]
 +++
 
 # 오늘의 뉴스 브리핑 — 2026년 3월 2일
 
 ---
 
-## 🔥 중동 위기: 미국·이스라엘 vs 이란, 사흘째 교전
+## 🔴 AWS UAE 데이터센터 미사일 피격 — 클라우드 인프라의 새로운 위협
 
-미국과 이스라엘이 이란을 상대로 군사 공격을 사흘째 이어가고 있다. 테헤란 곳곳에서 폭발음이 보고됐고, 미군 사상자도 발생했다.
+오늘자 Techmeme 최상단을 장식한 뉴스다. 이란의 반격 공격 중 UAE에 위치한 AWS 데이터센터가 피격됐다. AWS 공식 발표는 **"가용 영역 mec1-az2가 데이터센터에 충돌한 물체로 인해 화재가 발생해 영향을 받았다"** — '미사일'이라는 단어를 끝까지 피한 역대급 기업 공식 표현이다.
 
-트럼프 대통령은 **"모든 목표가 달성될 때까지 공격을 멈추지 않겠다"**고 밝혔고, 이란 외무장관은 **"자위권에 한계가 없다"**고 맞받았다.
+Vercel의 Guillermo Rauch는 자사 두바이 리전의 1차 AZ(가용 영역)가 피해를 입지 않아 서비스가 유지됐다고 발표했다. The Register는 이를 **"전쟁으로 인한 최초의 가용 영역 장애"**로 기록했다.
 
-시장이 가장 긴장하는 부분은 **호르무즈 해협(Strait of Hormuz)** 봉쇄 가능성이다. 세계 원유의 약 20%가 통과하는 이 길목이 막히면 국제 유가는 즉각 폭등하고 에너지 공급망 전체가 흔들린다.
+업계가 주목하는 본질적인 질문은 이미 나왔다:
 
-> 💡 한국 입장에선? — 원유 수입 의존도가 높은 한국은 유가 충격에 직격탄을 맞을 수 있다. 정유주·항공주는 단기 변동성 주의.
+- *"데이터센터는 전쟁을 위해 설계되지 않았다. 냉각 시스템만 무력화해도 건물 전체가 셧다운된다"* — 업계 트위터 반응
+- *"소버린 AI 인프라가 필요하다"* — 중앙화된 클라우드 의존도에 대한 경고
 
----
+> 💡 이 사건은 단순한 AWS 장애가 아니다. **AI 시대에 클라우드 인프라가 군사 표적이 될 수 있다**는 최초의 실증 사례다.
 
-## 🤝 이재명 대통령, 싱가포르 국빈 방문
-
-이재명 대통령이 싱가포르를 국빈 방문해 로렌스 웡 총리와 정상회담을 가졌다. 핵심 의제는 **AI 협력**과 **SMR(Small Modular Reactor, 소형 모듈 원자로)** 공동 개발이다.
-
-'AI 커넥트 서밋'에도 참석해 동남아 시장에서의 기술 협력을 확대하는 방향을 제시했다. 한국의 원전 수출 전략과 싱가포르의 탄소중립 목표가 맞닿은 접점이다.
+**Sources:** [Reuters](https://www.reuters.com/world/middle-east/amazons-cloud-unit-reports-fire-after-objects-hit-uae-data-center-2026-03-01/) · [The Register](https://www.theregister.com/2026/03/01/asia_tech_news_roundup/) · [Techmeme](https://techmeme.com)
 
 ---
 
-## 🇰🇷 전남광주통합특별시 출범 확정
+## 🤖 Anthropic vs 펜타곤 — AI 군사 이용의 레드라인 충돌
 
-국회 본회의에서 광주광역시와 전라남도를 묶는 **전남광주통합특별시 설치 특별법**이 통과됐다. 오는 7월 1일 공식 출범 예정이다.
+이번 주 두 번째 빅 스토리다. The Atlantic이 내막을 상세 보도했다: **펜타곤이 Anthropic에 미국 시민의 지리정보·웹브라우징 데이터 같은 상업 대량 데이터(bulk data) 분석을 허용해달라고 요구했고, Anthropic이 이를 거부하면서 협상이 결렬됐다.**
 
-행정구역 통합으로 인구 300만 이상의 광역 메가시티가 탄생하는 것으로, 지방 소멸 문제에 대한 구조적 해법을 모색하는 실험이다.
+- Anthropic은 협상 결렬 직후 펜타곤을 상대로 소송 제기를 예고했다.
+- OpenAI는 그 날 밤 펜타곤과 프레임워크 계약을 체결했다.
+- 아이러니: WSJ 보도에 따르면 **트럼프 행정부가 Anthropic 사용을 금지한 지 몇 시간 뒤** 미군은 이란 공습에 Claude를 실제로 사용했다.
+- 이 사건 이후 Claude가 앱스토어 1위로 올라섰다 (Semafor).
 
----
+Anthropic CEO 다리오 아모데이: *"우리는 미국에 헌신하는 애국적 미국인이지만 레드라인은 지킨다."*
 
-## 📱 MWC 2026: '지능의 시대(The IQ Era)' 개막
+Anthropic이 지킨 레드라인은 **자율무기·시민 대량 감시**였다. OpenAI는 그 선을 넘었다.
 
-세계 최대 모바일 전시회 MWC 2026이 **'지능의 시대(The IQ Era)'**를 주제로 막을 열었다. AI와 6G가 올해의 핵심 키워드다.
-
-**삼성 갤럭시 S26** — '3세대 AI 스마트폰'으로 소개됐다. 주목할 기능은 **프라이버시 디스플레이** (측면 시야각 차단, 모바일 최초)와 상황 인식 AI 비서 '나우 넛지'다.
-
-**6G** — 에릭슨이 애플·미디어텍과 협력해 첫 6G 시연을 선보였다. 상용화 시점은 2030년경으로 예상되지만, 표준 경쟁은 이미 시작됐다.
-
----
-
-## 💰 은(銀) 가격, 사상 최고치 근접
-
-은 가격이 사상 최고치에 육박하는 급등세를 보이고 있다. 원인은 복합적이다 — 산업용 수요(태양광 패널, AI 서버 냉각), 투자 수요, 중동발 지정학적 리스크가 한꺼번에 몰렸다.
-
-금은 안전자산으로 수요가 꾸준하지만, 은은 **산업재 성격이 강해 경기 회복과 에너지 전환 동시에** 수혜를 받는 구조다.
+**Sources:** [The Atlantic](https://www.theatlantic.com/technology/2026/03/inside-anthropics-killer-robot-dispute-with-the-pentagon/686200/) · [WSJ](https://www.wsj.com/livecoverage/iran-strikes-2026/card/u-s-strikes-in-middle-east-use-anthropic-hours-after-trump-ban-ozNO0iClZpfpL7K7ElJ2) · [Semafor](https://www.semafor.com/article/03/01/2026/claude-attracts-users-on-pentagon-spat) · [Techmeme](https://techmeme.com)
 
 ---
 
-## 📊 오늘의 시장 요약
+## 🧠 Anthropic Courses — 무료 AI 강의 공개 (GeekNews)
 
-| 지표 | 수준 | 특이사항 |
-|------|------|----------|
-| 코스피 | 6,200대 유지 | 2월 한 달 +19.5%, 단기 과열 경고 |
-| 코스닥 | 1,190대 | 2월 +3.77%, 코스피 대비 상승률 부진 |
-| 국제 유가 | 급등 압력 | 호르무즈 봉쇄 우려 |
-| 은 가격 | 사상 최고 근접 | 산업·투자 수요 동반 급증 |
-| 원/달러 환율 | 변동성 확대 | 중동 리스크+외국인 수급 불안 |
+Anthropic이 개발자 대상 무료 온라인 강의를 공개했다. Claude 기본 API 활용부터 Claude Code, MCP 서버 구축, Agent Skills까지 커버한다.
+
+**Sources:** [GeekNews](https://news.hada.io/topic?id=27118)
 
 ---
 
-**Sources:** [연합뉴스](https://yna.co.kr) · [조선일보](https://chosun.com) · [삼성전자](https://samsung.com) · [Ericsson](https://ericsson.com)
+## ⚡ 알리바바 Qwen3.5-Medium — 로컬에서 Sonnet 4.5 수준 (GeekNews)
+
+알리바바가 Qwen3.5 시리즈를 오픈소스(Apache 2.0)로 공개했다. 35B, 122B, 27B 모델로 구성되며, 로컬 실행 상태에서 Claude Sonnet 4.5 수준의 성능을 낸다고 벤처비트가 보도했다. GPT-5-mini와도 경쟁 가능한 수준.
+
+**Sources:** [GeekNews](https://news.hada.io/topic?id=27111) · [VentureBeat](https://venturebeat.com/technology/alibabas-new-open-source-qwen3-5-medium-models-offer-sonnet-4-5-performance)
+
+---
+
+## 🔧 WebMCP — 브라우저가 MCP를 직접 지원한다 (Hacker News)
+
+Google Chrome이 WebMCP 얼리 프리뷰를 공개했다. **MCP(Model Context Protocol)**를 브라우저 네이티브로 지원하는 기술로, HN에서 129개의 댓글이 달리며 주목받고 있다. AI 에이전트가 웹브라우저와 더 긴밀하게 통합되는 방향의 중요한 스텝이다.
+
+**Sources:** [Hacker News](https://news.ycombinator.com/item?id=47211249) · [Chrome Dev Blog](https://developer.chrome.com/blog/webmcp-epp)
+
+---
+
+## 💻 에이전틱 엔지니어링 시대의 생존 스킬 9가지 (GeekNews)
+
+Karpathy가 주말 프로젝트를 AI 에이전트에게 완전히 위임한 경험을 바탕으로 정리한 글이 GeekNews에서 화제다. IP, 사용자명, 비밀번호, 목표만 주고 30분 뒤 결과를 확인하는 방식으로 에이전트의 가능성과 한계를 동시에 보여줬다.
+
+**Sources:** [GeekNews](https://news.hada.io/topic?id=27104)
+
+---
+
+**오늘 주요 소스:** [Techmeme](https://techmeme.com) · [GeekNews](https://news.hada.io) · [Hacker News](https://news.ycombinator.com)
