@@ -105,7 +105,7 @@
     function loadPagefind() {
       if (pagefindReady) return Promise.resolve();
       pagefindReady = true;
-      return import('{{ config.base_url }}/pagefind/pagefind.js')
+      return import('{{ config.base_url | safe }}/pagefind/pagefind.js')
         .then(function (pf) { pagefind = pf; })
         .catch(function (e) { console.warn('Pagefind load failed:', e); pagefindReady = false; });
     }
