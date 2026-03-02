@@ -136,3 +136,5 @@ npx pagefind --site /tmp/insight_public --force-language ko
 2. `view_content_chunk`로 Top News 청크를 순서대로 읽는다.
 3. 오늘 날짜 기준 중요 헤드라인 3~6개를 선별해서 포스트에 담는다.
 4. 각 항목 끝에 원본 소스 링크를 반드시 표기한다.
+
+뉴스 요약 시 더 자세히 설명하고, 비유를 들어 쉽게 설명한다.
