@@ -5,7 +5,7 @@ date = 2026-02-27
 [extra]
 categories = ["stock", "energy", "battery"]
 +++
-# ESS 관련 주식 리스트: AI 시대의 에너지 저장 인프라
+# ESS 관련 주식 리스트: AI 시대의 에너지 저장 인프라.
 
 > ESS(Energy Storage System, 에너지 저장 장치)가 AI 데이터센터와 재생에너지의 핵심 인프라로 떠올랐다. 태양광·풍력은 날씨에 따라 발전량이 들쭉날쭉한데, ESS가 이를 평탄하게 만들어 24시간 안정 전력을 공급한다.
 
